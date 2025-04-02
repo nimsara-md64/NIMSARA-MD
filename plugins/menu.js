@@ -1,3 +1,5 @@
+
+
 const { readEnv } = require("../lib/database");
 const { cmd, commands } = require("../command");
 
@@ -5,7 +7,7 @@ cmd(
   {
     pattern: "menu",
     alise: ["getmenu"],
-    react:"🧡"
+    react: "💗"
     desc: "get cmd list",
     category: "main",
     filename: __filename,
@@ -58,36 +60,36 @@ cmd(
         }
       }
 
-      let madeMenu = `👋 *Hello  ${pushname}*
+      let madeMenu = `👋✨ *Hello...🍷  ${pushname}*
 
 
 | *MAIN COMMANDS* |
-    ▫️.alive
-    ▫️.menu
-    ▫️.ai <text>
-    ▫️.system
-    ▫️.owner
+    â–«ï¸.alive
+    â–«ï¸.menu
+    â–«ï¸.ai <text>
+    â–«ï¸.system
+    â–«ï¸.owner
 | *DOWNLOAD COMMANDS* |
-    ▫️.song <text>
-    ▫️.video <text>
-    ▫️.fb <link>
+    â–«ï¸.song <text>
+    â–«ï¸.video <text>
+    â–«ï¸.fb <link>
 | *GROUP COMMANDS* |
 ${menu.group}
 | *OWNER COMMANDS* |
-    ▫️.restart
-    ▫️.update
+    â–«ï¸.restart
+    â–«ï¸.update
 | *CONVERT COMMANDS* |
-    ▫️.sticker <reply img>
-    ▫️.img <reply sticker>
-    ▫️.tr <lang><text>
-    ▫️.tts <text>
+    â–«ï¸.sticker <reply img>
+    â–«ï¸.img <reply sticker>
+    â–«ï¸.tr <lang><text>
+    â–«ï¸.tts <text>
 | *SEARCH COMMANDS* |
 ${menu.search}
 
 
-🚫𝐌𝐚𝐝𝐞 𝐛𝐲 𝐍_𝐈_𝐌_𝐒_𝐀_𝐑_𝐀🚫
+🚫 Made By 𝐍_𝐈_𝐌_𝐒_𝐀_𝐑_𝐀 🚫
 
-> ROBIN MENU MSG
+> NIMSARA MENU MSG
 `;
       await robin.sendMessage(
         from,
