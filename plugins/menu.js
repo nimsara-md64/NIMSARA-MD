@@ -1,6 +1,5 @@
-const { readEnv } = require("../lib/database");
 const { cmd, commands } = require("../command");
-
+const config = require('../config');
 cmd(
   {
     pattern: "menu",
@@ -40,8 +39,7 @@ cmd(
     }
   ) => {
     try {
-      const config = await readEnv();
-      let menu = {
+    let menu = {
         main: "",
         download: "",
         group: "",
