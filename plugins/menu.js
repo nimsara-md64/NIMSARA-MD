@@ -1,13 +1,11 @@
-
-
 const { readEnv } = require("../lib/database");
 const { cmd, commands } = require("../command");
 
 cmd(
   {
     pattern: "menu",
-    alise: ["getmenu"],
-    react: "💯"
+    alias: ["getmenu"],  // Fixed typo: 'alise' to 'alias'
+    react: "💯",
     desc: "get cmd list",
     category: "main",
     filename: __filename,
@@ -52,45 +50,41 @@ cmd(
         search: "",
       };
 
-      for (let i = 0; i < commands.length; i++) {
-        if (commands[i].pattern && !commands[i].dontAddCommandList) {
-          menu[
-            commands[i].category
-          ] += `${config.PREFIX}${commands[i].pattern}\n`;
+      // Generate menu items for each category
+      for (let cmd of commands) {
+        if (cmd.pattern && !cmd.dontAddCommandList && menu[cmd.category] !== undefined) {
+          menu[cmd.category] += `${config.PREFIX}${cmd.pattern}\n`;
         }
       }
 
-      let madeMenu = `👋✨ *Hello...🍷  ${pushname}*
+      // Create the menu message
+      let madeMenu = `👋✨ *Hello...🍷  ${pushname || "User"}*\n\n` +
+        `| *MAIN COMMANDS* |\n` +
+        `    ➥ .alive\n` +
+        `    ➥ .menu\n` +
+        `    ➥ .ai <text>\n` +
+        `    ➥ .system\n` +
+        `    ➥ .owner\n` +
+        `| *DOWNLOAD COMMANDS* |\n` +
+        `    ➥ .song <text>\n` +
+        `    ➥ .video <text>\n` +
+        `    ➥ .fb <link>\n` +
+        `| *GROUP COMMANDS* |\n` +
+        `${menu.group || "    ➥ No group commands available\n"}` +
+        `| *OWNER COMMANDS* |\n` +
+        `    ➥ .restart\n` +
+        `    ➥ .update\n` +
+        `| *CONVERT COMMANDS* |\n` +
+        `    ➥ .sticker <reply img>\n` +
+        `    ➥ .img <reply sticker>\n` +
+        `    ➥ .tr <lang><text>\n` +
+        `    ➥ .tts <text>\n` +
+        `| *SEARCH COMMANDS* |\n` +
+        `${menu.search || "    ➥ No search commands available\n"}\n\n` +
+        `🚫 Made By 𝐍_𝐈_𝐌_𝐒_𝐀_𝐑_𝐀 🚫\n\n` +
+        `> NIMSARA MENU MSG`;
 
-
-| *MAIN COMMANDS* |
-    â–«ï¸.alive
-    â–«ï¸.menu
-    â–«ï¸.ai <text>
-    â–«ï¸.system
-    â–«ï¸.owner
-| *DOWNLOAD COMMANDS* |
-    â–«ï¸.song <text>
-    â–«ï¸.video <text>
-    â–«ï¸.fb <link>
-| *GROUP COMMANDS* |
-${menu.group}
-| *OWNER COMMANDS* |
-    â–«ï¸.restart
-    â–«ï¸.update
-| *CONVERT COMMANDS* |
-    â–«ï¸.sticker <reply img>
-    â–«ï¸.img <reply sticker>
-    â–«ï¸.tr <lang><text>
-    â–«ï¸.tts <text>
-| *SEARCH COMMANDS* |
-${menu.search}
-
-
-🚫 Made By 𝐍_𝐈_𝐌_𝐒_𝐀_𝐑_𝐀 🚫
-
-> NIMSARA MENU MSG
-`;
+      // Send the menu with image
       await robin.sendMessage(
         from,
         {
@@ -102,8 +96,8 @@ ${menu.search}
         { quoted: mek }
       );
     } catch (e) {
-      console.log(e);
-      reply(`${e}`);
+      console.error("Error in menu command:", e);
+      await reply(`❌ Error generating menu: ${e.message}`);
     }
   }
 );
