@@ -69,7 +69,7 @@ cmd({
               document: { url: downloadLink },
               mimetype: 'audio/mpeg',
               fileName: `${songData.title}.mp3`,
-              caption: `${songData.title}\n\n> ᴅᴇɴᴇᴛʜ-ᴍᴅ ʙʏ ᴋɪɴɢ X ᴅᴇɴᴇᴛʜᴅᴇᴠ®`
+              caption: `${songData.title}\n\n> 🚫 MADE BY 𝐍_𝐈_𝐌_𝐒_𝐀_𝐑_𝐀 🚫`
             }, { quoted: quotedMessage });
             break;
           default:
