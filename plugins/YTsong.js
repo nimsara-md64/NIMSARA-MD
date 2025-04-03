@@ -40,7 +40,7 @@ cmd({
     songDetailsMessage += `*Choose Your Download Format:*\n\n`;
     songDetailsMessage += `1 || Audio File 🎶\n`;
     songDetailsMessage += `2 || Document File 📂\n\n`;
-    songDetailsMessage += `> ᴅᴇɴᴇᴛʜ-ᴍᴅ ʙʏ ᴋɪɴɢ X ᴅᴇɴᴇᴛʜᴅᴇᴠ®`;
+    songDetailsMessage += `> 🚫 MADE BY 𝐍_𝐈_𝐌_𝐒_𝐀_𝐑_𝐀 🚫`;
 
     // Send the video thumbnail with song details
     const sentMessage = await messageHandler.sendMessage(from, {
