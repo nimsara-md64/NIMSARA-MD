@@ -1,114 +1,85 @@
-const { cmd, commands } = require("../command");
-const yts = require("yt-search");
-const { ytmp3 } = require("@vreden/youtube_scraper");
+/*
+ʏᴏᴜᴛᴜʙᴇ ᴍᴘ3 ᴅᴏᴡɴʟᴏᴀᴅᴇʀ ᴘʟᴜɢɪɴ
+ᴄʀᴇᴀᴛᴇᴅ ʙʏ : chathura 
+*/
 
-cmd(
-  {
-    pattern: "song",
-    react: "🎵",
-    desc: "Download Song",
-    category: "download",
-    filename: __filename,
-  },
-  async (
-    robin,
-    mek,
-    m,
-    {
-      from,
-      quoted,
-      body,
-      isCmd,
-      command,
-      args,
-      q,
-      isGroup,
-      sender,
-      senderNumber,
-      botNumber2,
-      botNumber,
-      pushname,
-      isMe,
-      isOwner,
-      groupMetadata,
-      groupName,
-      participants,
-      groupAdmins,
-      isBotAdmins,
-      isAdmins,
-      reply,
+const { cmd, commands } = require('../command');
+const yts = require('yt-search');
+const ddownr = require('denethdev-ytmp3'); // Importing the denethdev-ytmp3 package for downloading
+
+cmd({
+  pattern: "song",
+  desc: "Download songs.",
+  category: "download",
+  react: '🎧',
+  filename: __filename
+}, async (messageHandler, context, quotedMessage, { from, reply, q }) => {
+  try {
+    if (!q) return reply("*Please Provide A Song Name or Url 🙄*");
+    
+    // Search for the song using yt-search
+    const searchResults = await yts(q);
+    if (!searchResults || searchResults.videos.length === 0) {
+      return reply("*No Song Found Matching Your Query 🧐*");
     }
-  ) => {
-    try {
-      if (!q) return reply("*නමක් හරි ලින්ක් එකක් හරි දෙන්න* 🌚❤️");
 
-      // Search for the video
-      const search = await yts(q);
-      const data = search.videos[0];
-      const url = data.url;
+    const songData = searchResults.videos[0];
+    const songUrl = songData.url;
 
-      // Song metadata description
-      let desc = `
-*🚫 NIMSARA SONG DOWNLOADER 🚫*
+    // Using denethdev-ytmp3 to fetch the download link
+    const result = await ddownr.download(songUrl, 'mp3'); // Download in mp3 format
+    const downloadLink = result.downloadUrl; // Get the download URL
 
-👻 *title* : ${data.title}
-👻 *description* : ${data.description}
-👻 *time* : ${data.timestamp}
-👻 *ago* : ${data.ago}
-👻 *views* : ${data.views}
-👻 *url* : ${data.url}
+    let songDetailsMessage = `*ＹＯＵＴＵＢＥ ＡＵＤＩＯ ＤＬ*\n\n`;
+    songDetailsMessage += `*⚜ Title:* ${songData.title}\n`;
+    songDetailsMessage += `*👀 Views:* ${songData.views}\n`;
+    songDetailsMessage += `*⏰ Duration:* ${songData.timestamp}\n`;
+    songDetailsMessage += `*📆 Uploaded:* ${songData.ago}\n`;
+    songDetailsMessage += `*📽 Channel:* ${songData.author.name}\n`;
+    songDetailsMessage += `*🖇 URL:* ${songData.url}\n\n`;
+    songDetailsMessage += `*Choose Your Download Format:*\n\n`;
+    songDetailsMessage += `1 || Audio File 🎶\n`;
+    songDetailsMessage += `2 || Document File 📂\n\n`;
+    songDetailsMessage += `> ᴅᴇɴᴇᴛʜ-ᴍᴅ ʙʏ ᴋɪɴɢ X ᴅᴇɴᴇᴛʜᴅᴇᴠ®`;
 
-𝐌𝐚𝐝𝐞 𝐛𝐲 𝐍_𝐈_𝐌_𝐒_𝐀_𝐑_𝐀
-`;
+    // Send the video thumbnail with song details
+    const sentMessage = await messageHandler.sendMessage(from, {
+      image: { url: songData.thumbnail },
+      caption: songDetailsMessage,
+    }, { quoted: quotedMessage });
 
-      // Send metadata thumbnail message
-      await robin.sendMessage(
-        from,
-        { image: { url: data.thumbnail }, caption: desc },
-        { quoted: mek }
-      );
+    // Listen for the user's reply to select the download format
+    messageHandler.ev.on("messages.upsert", async (update) => {
+      const message = update.messages[0];
+      if (!message.message || !message.message.extendedTextMessage) return;
 
-      // Download the audio using @vreden/youtube_scraper
-      const quality = "128"; // Default quality
-      const songData = await ytmp3(url, quality);
+      const userReply = message.message.extendedTextMessage.text.trim();
 
-      // Validate song duration (limit: 30 minutes)
-      let durationParts = data.timestamp.split(":").map(Number);
-      let totalSeconds =
-        durationParts.length === 3
-          ? durationParts[0] * 3600 + durationParts[1] * 60 + durationParts[2]
-          : durationParts[0] * 60 + durationParts[1];
-
-      if (totalSeconds > 1800) {
-        return reply("⏱️ audio limit is 30 minitues");
+      // Handle the download format choice
+      if (message.message.extendedTextMessage.contextInfo.stanzaId === sentMessage.key.id) {
+        switch (userReply) {
+          case '1': // Audio File
+            await messageHandler.sendMessage(from, {
+              audio: { url: downloadLink },
+              mimetype: "audio/mpeg"
+            }, { quoted: quotedMessage });
+            break;
+          case '2': // Document File
+            await messageHandler.sendMessage(from, {
+              document: { url: downloadLink },
+              mimetype: 'audio/mpeg',
+              fileName: `${songData.title}.mp3`,
+              caption: `${songData.title}\n\n> ᴅᴇɴᴇᴛʜ-ᴍᴅ ʙʏ ᴋɪɴɢ X ᴅᴇɴᴇᴛʜᴅᴇᴠ®`
+            }, { quoted: quotedMessage });
+            break;
+          default:
+            reply("*Invalid Option. Please Select A Valid Option 🙄*");
+            break;
+        }
       }
-
-      // Send audio file
-      await robin.sendMessage(
-        from,
-        {
-          audio: { url: songData.download.url },
-          mimetype: "audio/mpeg",
-        },
-        { quoted: mek }
-      );
-
-      // Send as a document (optional)
-      await robin.sendMessage(
-        from,
-        {
-          document: { url: songData.download.url },
-          mimetype: "audio/mpeg",
-          fileName: `${data.title}.mp3`,
-          caption: "𝐌𝐚𝐝𝐞 𝐛𝐲 𝐍_𝐈_𝐌_𝐒_𝐀_𝐑_𝐀",
-        },
-        { quoted: mek }
-      );
-
-      return reply("*Thanks for using my bot* 🌚❤️");
-    } catch (e) {
-      console.log(e);
-      reply(`❌ Error: ${e.message}`);
-    }
+    });
+  } catch (error) {
+    console.error(error);
+    reply("*An Error Occurred While Processing Your Request 😔*");
   }
-);
+});
