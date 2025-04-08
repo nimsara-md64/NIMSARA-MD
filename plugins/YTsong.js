@@ -30,7 +30,7 @@ cmd({
     const result = await ddownr.download(songUrl, 'mp3'); // Download in mp3 format
     const downloadLink = result.downloadUrl; // Get the download URL
 
-    let songDetailsMessage = `*`𝐍𝐈𝐌𝐒𝐀𝐑𝐀 𝐒𝐎𝐍𝐆 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃`*\n\n`;
+    let songDetailsMessage = `*𝐍𝐈𝐌𝐒𝐀𝐑𝐀 𝐒𝐎𝐍𝐆 𝐃𝐎𝐖𝐍𝐋𝐎𝐀𝐃*\n\n`;
     songDetailsMessage += `*⚜ Title:* ${songData.title}\n`;
     songDetailsMessage += `*👀 Views:* ${songData.views}\n`;
     songDetailsMessage += `*⏰ Duration:* ${songData.timestamp}\n`;
