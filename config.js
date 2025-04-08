@@ -6,7 +6,7 @@ function convertToBool(text, fault = "true") {
   return text === fault ? true : false;
 }
 module.exports = {
-  SESSION_ID: process.env.SESSION_ID || "kwRSBYwY#YepO8dsFMaxVt3cmI51fP9KDfeqMVQkqbybwVGxszhc",
+  SESSION_ID: process.env.SESSION_ID || "AtBX0RRQ#hMaQ4qByxOdlcP0nbNbxdNducACuLSAzLlSRi9w4E9s",
   OWNER_NUM: process.env.OWNER_NUM || "94742249044",
   PREFIX: process.env.PREFIX || ".",
   ALIVE_IMG: process.env.ALIVE_IMG || "https://raw.githubusercontent.com/nimsara-md64/Bot-helper/refs/heads/main/Alive.jpg",
