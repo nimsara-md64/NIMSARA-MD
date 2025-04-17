@@ -68,7 +68,7 @@ cmd(
         from,
         {
           image: imageBuffer,
-          caption: "Here is your converted image!\n\n𝐌𝐚𝐝𝐞 𝐛𝐲 𝐒_𝐈_𝐇_𝐈_𝐋_𝐄_𝐋",
+          caption: "Here is your converted image!\n\n𝐌𝐚𝐝𝐞 𝐛𝐲 𝐍𝐈𝐌𝐒𝐀𝐑𝐀-𝐌𝐃.. ⚠️💗",
         },
         { quoted: mek }
       );
