@@ -1,5 +1,5 @@
 {
-  "name": "𝐍𝐈𝐌𝐒𝐀𝐑𝐀-𝐌𝐃.. ⚠️💗",
+  "name": "nimsara-md",
   "version": "1.0.0",
   "description": "A WhatsApp bot created using Node.js",
   "main": "index.js",
@@ -28,7 +28,7 @@
     "fb-downloader-scrapper": "^3.0.1",
     "canvas": "^3.1.0",
     "@vreden/youtube_scraper": "^1.2.7",
-    "denethdev-ytmp3": "latest"
-    "wa-sticker-formatter": "^4.4.4",
+    "denethdev-ytmp3": "latest",
+    "wa-sticker-formatter": "^4.4.4"
   }
 }
