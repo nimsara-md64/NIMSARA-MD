@@ -59,23 +59,26 @@ cmd(
         `| *MAIN COMMANDS* |\n` +
         `    ➥ .alive\n` +
         `    ➥ .menu\n` +
-        `    ➥ .ai <text>\n` +
-        `    ➥ .system\n` +
         `    ➥ .owner\n` +
         `| *DOWNLOAD COMMANDS* |\n` +
         `    ➥ .song <text>\n` +
         `    ➥ .video <text>\n` +
         `    ➥ .fb <link>\n` +
         `| *GROUP COMMANDS* |\n` +
-        `${menu.group || "    ➥ No group commands available\n"}` +
+        `    ➥ .demote \n` +
+        `    ➥ .promote \n` +
+        `    ➥ .mute \n` +
+        `    ➥ .unmute \n` +
+        `    ➥ .kick \n`
+        `    ➥ .add \n` +
         `| *OWNER COMMANDS* |\n` +
         `    ➥ .restart\n` +
         `    ➥ .update\n` +
+        `    ➥ .block \n` +
+        `    ➥ .unblock \n` +
         `| *CONVERT COMMANDS* |\n` +
         `    ➥ .sticker <reply img>\n` +
         `    ➥ .img <reply sticker>\n` +
-        `    ➥ .tr <lang><text>\n` +
-        `    ➥ .tts <text>\n` +
         `| *SEARCH COMMANDS* |\n` +
         `${menu.search || "    ➥ No search commands available\n"}\n\n` +
         `🚫 Made By 𝐍_𝐈_𝐌_𝐒_𝐀_𝐑_𝐀 🚫\n\n` +
