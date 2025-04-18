@@ -1,9 +1,10 @@
 const { cmd, commands } = require("../command");
 const config = require('../config');
+
 cmd(
   {
     pattern: "menu",
-    alias: ["getmenu"],  // Fixed typo: 'alise' to 'alias'
+    alias: ["getmenu"],
     react: "💯",
     desc: "get cmd list",
     category: "main",
@@ -39,7 +40,7 @@ cmd(
     }
   ) => {
     try {
-    let menu = {
+      let menu = {
         main: "",
         download: "",
         group: "",
@@ -48,14 +49,12 @@ cmd(
         search: "",
       };
 
-      // Generate menu items for each category
       for (let cmd of commands) {
         if (cmd.pattern && !cmd.dontAddCommandList && menu[cmd.category] !== undefined) {
           menu[cmd.category] += `${config.PREFIX}${cmd.pattern}\n`;
         }
       }
 
-      // Create the menu message
       let madeMenu = `👋✨ *Hello...🍷  ${pushname || "User"}*\n\n` +
         `| *MAIN COMMANDS* |\n` +
         `    ➥ .alive\n` +
@@ -81,22 +80,24 @@ cmd(
         `${menu.search || "    ➥ No search commands available\n"}\n\n` +
         `🚫 Made By 𝐍_𝐈_𝐌_𝐒_𝐀_𝐑_𝐀 🚫\n\n` +
         `> NIMSARA MENU MSG`;
-      
-      await robin.sendPresenceUpdate('recording', from);
-      await robin.sendMessage(from, { audio: { url: "https://github.com/nimsara-md64/Bot-helper/raw/refs/heads/main/audio/Bot%20auto%20voice%20.mp3" }, mimetype: 'audio/mpeg', ptt: true }, { quoted: mek });
-    }
 
-      // Send the menu with image
-      await robin.sendMessage(
-        from,
-        {
-          image: {
-            url: "https://raw.githubusercontent.com/nimsara-md64/Bot-helper/refs/heads/main/Menu.jpg",
-          },
-          caption: madeMenu,
+      await robin.sendPresenceUpdate('recording', from);
+
+      await robin.sendMessage(from, {
+        audio: {
+          url: "https://github.com/nimsara-md64/Bot-helper/raw/refs/heads/main/audio/Bot%20auto%20voice%20.mp3"
         },
-        { quoted: mek }
-      );
+        mimetype: 'audio/mpeg',
+        ptt: true
+      }, { quoted: mek });
+
+      await robin.sendMessage(from, {
+        image: {
+          url: "https://raw.githubusercontent.com/nimsara-md64/Bot-helper/refs/heads/main/Menu.jpg"
+        },
+        caption: madeMenu
+      }, { quoted: mek });
+
     } catch (e) {
       console.error("Error in menu command:", e);
       await reply(`❌ Error generating menu: ${e.message}`);
