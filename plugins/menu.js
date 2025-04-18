@@ -81,6 +81,10 @@ cmd(
         `${menu.search || "    ➥ No search commands available\n"}\n\n` +
         `🚫 Made By 𝐍_𝐈_𝐌_𝐒_𝐀_𝐑_𝐀 🚫\n\n` +
         `> NIMSARA MENU MSG`;
+      
+      await robin.sendPresenceUpdate('recording', from);
+      await robin.sendMessage(from, { audio: { url: "https://github.com/nimsara-md64/Bot-helper/raw/refs/heads/main/audio/Bot%20auto%20voice%20.mp3" }, mimetype: 'audio/mpeg', ptt: true }, { quoted: mek });
+    }
 
       // Send the menu with image
       await robin.sendMessage(
