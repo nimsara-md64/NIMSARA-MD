@@ -5,7 +5,7 @@ cmd(
   {
     pattern: "menu",
     alias: ["getmenu"],
-    react: "💯",
+    react: "💯",  // Default react to show for this command
     desc: "get cmd list",
     category: "main",
     filename: __filename,
@@ -49,6 +49,7 @@ cmd(
         search: "",
       };
 
+      // Loop through all commands and construct the menu
       for (let cmd of commands) {
         if (cmd.pattern && !cmd.dontAddCommandList && menu[cmd.category] !== undefined) {
           menu[cmd.category] += `${config.PREFIX}${cmd.pattern}\n`;
@@ -69,7 +70,7 @@ cmd(
         `    ➥ .promote \n` +
         `    ➥ .mute \n` +
         `    ➥ .unmute \n` +
-        `    ➥ .kick \n`
+        `    ➥ .kick \n` +
         `    ➥ .add \n` +
         `| *OWNER COMMANDS* |\n` +
         `    ➥ .restart\n` +
@@ -84,8 +85,10 @@ cmd(
         `🚫 Made By 𝐍_𝐈_𝐌_𝐒_𝐀_𝐑_𝐀 🚫\n\n` +
         `> NIMSARA MENU MSG`;
 
+      // Send presence update
       await robin.sendPresenceUpdate('recording', from);
 
+      // Send audio message (optional)
       await robin.sendMessage(from, {
         audio: {
           url: "https://github.com/nimsara-md64/Bot-helper/raw/refs/heads/main/audio/Bot%20auto%20voice%20.mp3"
@@ -94,12 +97,17 @@ cmd(
         ptt: true
       }, { quoted: mek });
 
+      // Send image with the menu
       await robin.sendMessage(from, {
         image: {
           url: "https://raw.githubusercontent.com/nimsara-md64/Bot-helper/refs/heads/main/Menu.jpg"
         },
         caption: madeMenu
       }, { quoted: mek });
+
+      // React to the message with the specified emoji
+      const reaction = cmd.react || "💯";  // Use the default reaction or the one defined for the command
+      await robin.react(from, reaction);  // React to the message
 
     } catch (e) {
       console.error("Error in menu command:", e);
