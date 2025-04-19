@@ -10,74 +10,84 @@ const DOWNLOAD_URL = "https://api.skymansion.site/movies-dl/download";
 const API_KEY = config.MOVIE_API_KEY;
 
 cmd({
-    pattern: "movie",
-    alias: ["moviedl", "films"],
-    react: '🎬',
-    category: "download",
-    desc: "Search and download movies from PixelDrain",
-    filename: __filename
+    pattern: "movie",
+    alias: ["moviedl", "films"],
+    react: '🎬',
+    category: "download",
+    desc: "Search and download movies from PixelDrain with quality selection",
+    filename: __filename
 }, async (robin, m, mek, { from, q, reply }) => {
-    try {
-        if (!q || q.trim() === '') return await reply('❌ Please provide a movie name! (e.g., Deadpool)');
+    try {
+        if (!q || q.trim() === '') return reply('❌ Please provide a movie name! (e.g., Avatar | 720p)');
 
-        // Fetch movie search results
-        const searchUrl = `${API_URL}?q=${encodeURIComponent(q)}&api_key=${API_KEY}`;
-        let response = await fetchJson(searchUrl);
+        const [movieQuery, requestedQualityRaw] = q.split('|').map(s => s.trim());
+        const requestedQuality = requestedQualityRaw?.toLowerCase();
 
-        if (!response || !response.SearchResult || !response.SearchResult.result.length) {
-            return await reply(`❌ No results found for: *${q}*`);
-        }
+        const searchUrl = `${API_URL}?q=${encodeURIComponent(movieQuery)}&api_key=${API_KEY}`;
+        const response = await fetchJson(searchUrl);
 
-        const selectedMovie = response.SearchResult.result[0]; // Select first result
-        const detailsUrl = `${DOWNLOAD_URL}/?id=${selectedMovie.id}&api_key=${API_KEY}`;
-        let detailsResponse = await fetchJson(detailsUrl);
+        const results = response?.SearchResult?.result;
+        if (!results?.length) return reply(`❌ No results found for: *${movieQuery}*`);
 
-        if (!detailsResponse || !detailsResponse.downloadLinks || !detailsResponse.downloadLinks.result.links.driveLinks.length) {
-            return await reply('❌ No PixelDrain download links found.');
-        }
+        const selectedMovie = results[0];
+        const detailsUrl = `${DOWNLOAD_URL}/?id=${selectedMovie.id}&api_key=${API_KEY}`;
+        const details = await fetchJson(detailsUrl);
 
-        // Select the 720p PixelDrain link
-        const pixelDrainLinks = detailsResponse.downloadLinks.result.links.driveLinks;
-        const selectedDownload = pixelDrainLinks.find(link => link.quality === "SD 480p");
-        
-        if (!selectedDownload || !selectedDownload.link.startsWith('http')) {
-            return await reply('❌ No valid 480p PixelDrain link available.');
-        }
+        const pixelLinks = details?.downloadLinks?.result?.links?.driveLinks;
+        if (!pixelLinks?.length) return reply('❌ No PixelDrain download links found.');
 
-        // Convert to direct download link
-        const fileId = selectedDownload.link.split('/').pop();
-        const directDownloadLink = `https://pixeldrain.com/api/file/${fileId}?download`;
-        
-        
-        // Download movie
-        const filePath = path.join(__dirname, `${selectedMovie.title}-480p.mp4`);
-        const writer = fs.createWriteStream(filePath);
-        
-        const { data } = await axios({
-            url: directDownloadLink,
-            method: 'GET',
-            responseType: 'stream'
-        });
+        // Quality list preview
+        if (!requestedQuality) {
+            const qualities = pixelLinks.map(link => `- ${link.quality}`).join('\n');
+            return reply(
+                `🎬 *${selectedMovie.title}* found!\n\n` +
+                `*Available Qualities:*\n${qualities}\n\n` +
+                `To download, use:\n.movie ${selectedMovie.title} | 720p`
+            );
+        }
 
-        data.pipe(writer);
+        // Select quality
+        const selectedDownload = pixelLinks.find(link =>
+            link.quality.toLowerCase().includes(requestedQuality)
+        );
 
-        writer.on('finish', async () => {
-            await robin.sendMessage(from, {
-                document: fs.readFileSync(filePath),
-                mimetype: 'video/mp4',
-                fileName: `${selectedMovie.title}-480p.mp4`,
-                caption: `*Nimsara-Md Movie Downloader*`,
-                quoted: mek 
-            });
-            fs.unlinkSync(filePath);
-        });
+        if (!selectedDownload) {
+            return reply(`❌ No link found for quality: *${requestedQualityRaw}*`);
+        }
 
-        writer.on('error', async (err) => {
-            console.error('Download Error:', err);
-            await reply('❌ Failed to download movie. Please try again.');
-        });
-    } catch (error) {
-        console.error('Error in movie command:', error);
-        await reply('❌ Sorry, something went wrong. Please try again later.');
-    }
+        const fileId = selectedDownload.link.split('/').pop();
+        const directDownloadLink = `https://pixeldrain.com/api/file/${fileId}?download`;
+
+        const safeTitle = selectedMovie.title.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+        const filePath = path.join(__dirname, `${safeTitle}_${Date.now()}.mp4`);
+        const writer = fs.createWriteStream(filePath);
+
+        const { data } = await axios({
+            url: directDownloadLink,
+            method: 'GET',
+            responseType: 'stream'
+        });
+
+        data.pipe(writer);
+
+        writer.on('finish', async () => {
+            await robin.sendMessage(from, {
+                document: fs.readFileSync(filePath),
+                mimetype: 'video/mp4',
+                fileName: `${selectedMovie.title}-${requestedQualityRaw}.mp4`,
+                caption: `*Nimsara-Md Movie Downloader*\n🎬 *${selectedMovie.title}*\n📥 Quality: ${selectedDownload.quality}`,
+                quoted: mek
+            });
+            fs.unlinkSync(filePath);
+        });
+
+        writer.on('error', async (err) => {
+            console.error('Download Error:', err);
+            await reply('❌ Failed to download movie. Please try again.');
+        });
+
+    } catch (error) {
+        console.error('Movie command error:', error);
+        await reply('❌ Something went wrong. Please try again later.');
+    }
 });
