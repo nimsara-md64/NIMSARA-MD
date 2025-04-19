@@ -66,7 +66,7 @@ cmd({
                 document: fs.readFileSync(filePath),
                 mimetype: 'video/mp4',
                 fileName: `${selectedMovie.title}-480p.mp4`,
-                caption: `🎬 *${selectedMovie.title}*\n📌 Quality: 480p\n✅ *Download Complete!*`,
+                caption: `*Nimsara-Md Movie Downloader*`,
                 quoted: mek 
             });
             fs.unlinkSync(filePath);
