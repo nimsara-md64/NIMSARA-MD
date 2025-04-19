@@ -9,7 +9,7 @@
     "restart": "pm2 restart '𝐍𝐈𝐌𝐒𝐀𝐑𝐀-𝐌𝐃.. ⚠️💗'"
   },
   "dependencies": {
-    "@whiskeysockets/baileys": "^6.7.16",
+    "@whiskeysockets/baileys": "^6.7.20",
     "pino": "^9.6.0",
     "pm2": "^6.0.5",
     "util": "^0.12.5",
