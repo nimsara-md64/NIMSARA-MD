@@ -61,6 +61,7 @@ cmd(
         `    ➥ .alive\n` +
         `    ➥ .menu\n` +
         `    ➥ .owner\n` +
+        `    ➥ .ai\n` +
         `| *DOWNLOAD COMMANDS* |\n` +
         `    ➥ .song <text>\n` +
         `    ➥ .video <text>\n` +
