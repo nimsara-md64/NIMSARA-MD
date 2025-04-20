@@ -57,18 +57,16 @@ const port = process.env.PORT || 8000;
 //=============================================
 
 async function connectToWA() {
- 
-  //===========================
-
   console.log("Connecting 𝐍𝐈𝐌𝐒𝐀𝐑𝐀-𝐌𝐃.. ⚠️💗");
   const { state, saveCreds } = await useMultiFileAuthState(
     __dirname + "/auth_info_baileys/"
   );
   var { version } = await fetchLatestBaileysVersion();
 
+  // Updated connection logic with debug logs
   const robin = makeWASocket({
-    logger: P({ level: "silent" }),
-    printQRInTerminal: false,
+    logger: P({ level: "debug" }), // Debug logs enabled
+    printQRInTerminal: true, // QR code terminal එකේ print වෙන්න ඕනෙ
     browser: Browsers.macOS("Firefox"),
     syncFullHistory: true,
     auth: state,
@@ -76,15 +74,21 @@ async function connectToWA() {
   });
 
   robin.ev.on("connection.update", (update) => {
-    const { connection, lastDisconnect } = update;
+    const { connection, lastDisconnect, qr } = update;
+    if (qr) {
+      console.log('QR Code:', qr); // QR code එක print වෙනවා
+      // Optionally, terminal එකේ QR code එක display කරන්න qrcode-terminal එක භාවිතා කරලා
+      qrcode.generate(qr, { small: true });
+    }
     if (connection === "close") {
-      if (
-        lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut
-      ) {
-        connectToWA();
+      const shouldReconnect = lastDisconnect?.error?.output?.statusCode !== DisconnectReason.loggedOut;
+      console.log('Connection closed:', lastDisconnect?.error, 'Reconnecting:', shouldReconnect);
+      if (shouldReconnect) {
+        connectToWA(); // Reconnect if not logged out
       }
     } else if (connection === "open") {
-      console.log(" Installing... ");
+      console.log("Bot connected! ✅");
+      console.log("Installing plugins...");
       const path = require("path");
       fs.readdirSync("./plugins/").forEach((plugin) => {
         if (path.extname(plugin).toLowerCase() == ".js") {
@@ -92,7 +96,7 @@ async function connectToWA() {
         }
       });
       console.log("𝐍𝐈𝐌𝐒𝐀𝐑𝐀-𝐌𝐃.. ⚠️💗 installed successful ✅");
-      console.log("𝐍𝐈𝐌𝐒𝐀𝐑𝐀-𝐌𝐃.. ⚠️💗 connected to whatsapp ✅");
+      console.log("𝐍𝐈𝐌𝐒𝐀𝐑𝐀-𝐌𝐃.. ⚠️💗 connected to WhatsApp ✅");
 
       let up = `𝐍𝐈𝐌𝐒𝐀𝐑𝐀-𝐌𝐃.. ⚠️💗 connected successful ✅`;
       let up1 = `Hello Nimsara, I made bot successful`;
@@ -111,7 +115,10 @@ async function connectToWA() {
       });
     }
   });
+
   robin.ev.on("creds.update", saveCreds);
+
+  // Rest of your message handling logic remains unchanged
   robin.ev.on("messages.upsert", async (mek) => {
     mek = mek.messages[0];
     if (!mek.message) return;
@@ -125,7 +132,7 @@ async function connectToWA() {
       config.AUTO_READ_STATUS === "true"
     ) {
       await robin.readMessages([mek.key]);
-  } 
+    } 
     
     const m = sms(robin, mek);
     const type = getContentType(mek.message);
@@ -236,13 +243,13 @@ async function connectToWA() {
         );
       }
     };
-    //Owner react
+    // Owner react
     if (senderNumber.includes("94742249044")) {
       if (isReact) return;
       m.react("💗");
     }
 
-    //work type
+    // Work type
     if (!isOwner && config.MODE === "private") return;
     if (!isOwner && isGroup && config.MODE === "inbox") return;
     if (!isOwner && !isGroup && config.MODE === "groups") return;
@@ -399,15 +406,17 @@ async function connectToWA() {
         });
       }
     });
-    //============================================================================
   });
 }
+
 app.get("/", (req, res) => {
   res.send("hey, 𝐍𝐈𝐌𝐒𝐀𝐑𝐀-𝐌𝐃.. ⚠️💗 started✅");
 });
+
 app.listen(port, () =>
   console.log(`Server listening on port http://localhost:${port}`)
 );
+
 setTimeout(() => {
   connectToWA();
 }, 4000);
